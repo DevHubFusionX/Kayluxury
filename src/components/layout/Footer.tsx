@@ -22,11 +22,13 @@ const socials = [
 export const Footer: React.FC = () => {
   return (
     <footer className="bg-black text-white pt-12 pb-0 overflow-hidden">
-      <div className="container-custom">
-        {/* Top: Brand + Socials */}
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 mb-10">
+      {/* Big animated wordmark — full bleed */}
+      <BigWordmark />
+
+      <div className="container-custom pb-10">
+        {/* Brand + Links */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 mt-6">
           <div className="space-y-4 max-w-xs">
-            
             <p className="text-gray-400 font-light leading-relaxed text-sm">
               Redefining luxury streetwear through curation and craftsmanship.
             </p>
@@ -61,36 +63,7 @@ export const Footer: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Newsletter */}
-        <div className="border-t border-gray-800 py-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <p className="text-sm text-gray-400">Get <span className="text-white font-bold">10% off</span> your first order — join the list.</p>
-            <form className="relative w-full sm:w-72 flex-shrink-0">
-              <input
-                type="email"
-                placeholder="Your email address"
-                className="w-full bg-transparent border-b border-gray-700 py-2.5 pr-14 text-sm focus:outline-none focus:border-white transition-colors"
-              />
-              <button className="absolute right-0 top-1/2 -translate-y-1/2 font-bold uppercase text-xs tracking-widest hover:text-gray-400 transition-colors">
-                Join
-              </button>
-            </form>
-          </div>
-        </div>
-
-        {/* Bottom bar */}
-        <div className="border-t border-gray-900 py-5 flex flex-col sm:flex-row justify-between items-center gap-3 text-[11px] text-gray-600 uppercase tracking-widest">
-          <p>© 2024 Kayluxury. All rights reserved.</p>
-          <div className="flex gap-5">
-            <a href="#" className="hover:text-gray-400 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-gray-400 transition-colors">Terms</a>
-          </div>
-        </div>
       </div>
-
-      {/* Big animated wordmark — full bleed */}
-      <BigWordmark />
     </footer>
   );
 };
