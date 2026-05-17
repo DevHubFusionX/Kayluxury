@@ -1,9 +1,10 @@
 import React from 'react';
-import { useCart } from '../../context/CartContext';
+import { useCartActions, useCartState } from '../../context/CartContext';
 import { Link } from 'react-router-dom';
 
 export const CartDrawer: React.FC = () => {
-  const { cart, removeFromCart, updateQuantity, cartTotal, isCartOpen, setIsCartOpen } = useCart();
+  const { cart, cartTotal, isCartOpen, setIsCartOpen } = useCartState();
+  const { removeFromCart, updateQuantity } = useCartActions();
 
   if (!isCartOpen) return null;
 
@@ -38,7 +39,7 @@ export const CartDrawer: React.FC = () => {
             </div>
           ) : (
             cart.map((item) => (
-              <div key={`${item.id}-${item.size}`} className="flex gap-4">
+              <div key={`${item.id}-${item.size}-${item.color}`} className="flex gap-4">
                 <div className="w-24 h-32 bg-gray-50 flex-shrink-0">
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                 </div>
@@ -69,7 +70,7 @@ export const CartDrawer: React.FC = () => {
                   </div>
                 </div>
                 <div className="text-sm font-bold">
-                  ₦{item.price}
+                  ₦{item.price.toLocaleString()}
                 </div>
               </div>
             ))

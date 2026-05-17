@@ -1,17 +1,36 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useCart } from '../../context/CartContext';
+import { useCartActions } from '../../context/CartContext';
+import type { Product } from '../../lib/api';
 
 interface ProductProps {
-  id: number;
+  id: string;
   name: string;
-  price: string;
+  price: string | number;
   image: string;
   category?: string;
 }
 
-export const ProductCard: React.FC<ProductProps> = ({ id, name, price, image }) => {
-  const { addToCart } = useCart();
+const ProductCardComponent: React.FC<ProductProps> = ({ id, name, price, image }) => {
+  const { addToCart } = useCartActions();
+
+  const priceNum = typeof price === 'string' ? parseFloat(price.replace(/,/g, '')) : price;
+
+  const handleQuickAdd = () => {
+    const product: Omit<Product, 'id'> & { id: string } = {
+      id,
+      name,
+      price: priceNum,
+      images: [image],
+      category: '',
+      sizes: [],
+      colors: [],
+      description: '',
+      details: [],
+      inStock: true,
+    };
+    addToCart(product, 'M', 'White');
+  };
 
   return (
     <div className="group relative">
@@ -23,10 +42,10 @@ export const ProductCard: React.FC<ProductProps> = ({ id, name, price, image }) 
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
         </Link>
-        {/* Quick Add Button */}
         <button
-          onClick={() => addToCart({ id, name, price, image }, 'M', 'White')}
+          onClick={handleQuickAdd}
           className="absolute top-2 right-2 sm:top-4 sm:right-4 w-7 h-7 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center shadow-lg opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 hover:bg-black hover:text-white"
+          aria-label="Quick add to cart"
         >
           <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
         </button>
@@ -35,8 +54,10 @@ export const ProductCard: React.FC<ProductProps> = ({ id, name, price, image }) 
         <Link to={`/product/${id}`}>
           <h3 className="text-[10px] sm:text-sm font-bold uppercase tracking-tight text-gray-900 group-hover:underline transition-all cursor-pointer line-clamp-2 leading-tight">{name}</h3>
         </Link>
-        <p className="text-xs sm:text-base font-bold">₦{price}</p>
+        <p className="text-xs sm:text-base font-bold">₦{typeof price === 'string' ? price : price.toLocaleString()}</p>
       </div>
     </div>
   );
 };
+
+export const ProductCard = React.memo(ProductCardComponent);

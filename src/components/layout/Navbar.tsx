@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useCart } from '../../context/CartContext';
+import { useCartState } from '../../context/CartContext';
 
 const navLinks = [
   { to: '/', label: 'Home' },
@@ -9,7 +9,7 @@ const navLinks = [
 ];
 
 export const Navbar: React.FC = () => {
-  const { setIsCartOpen, cart } = useCart();
+  const { cart, setIsCartOpen } = useCartState();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);

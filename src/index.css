@@ -5,69 +5,141 @@
   --color-brand-white: #ffffff;
   --color-brand-gray: #f5f5f5;
   --color-brand-dark-gray: #1a1a1a;
-  
+
+  /* Admin dashboard tokens */
+  --color-admin-sidebar: #111111;
+  --color-admin-sidebar-hover: #1c1c1c;
+  --color-admin-sidebar-border: #222222;
+  --color-admin-gold: #C9A84C;
+  --color-admin-surface: #f8f8f8;
+  --color-admin-card: #ffffff;
+
   --font-display: 'Outfit', sans-serif;
   --font-body: 'Inter', sans-serif;
 }
+
+/* ── Keyframe animations (top-level so they're never scoped) ── */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInPanel {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes slideInSidebar {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes fadeInRow {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes adminShimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* ── Base styles ── */
 
 @layer base {
   body {
     @apply font-body bg-brand-white text-brand-black antialiased;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
   }
 }
 
+/* ── Component utilities ── */
+
 @layer components {
   .btn-primary {
     @apply bg-brand-black text-brand-white px-8 py-3 font-medium transition-all hover:bg-brand-dark-gray active:scale-95;
   }
-  
+
   .container-custom {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @keyframes slideInRight {
-    from { transform: translateX(100%); }
-    to { transform: translateX(0); }
-  }
-
-  @keyframes slideInLeft {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(0); }
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+  /* ── Animation utility classes ── */
 
   .animate-fade-in {
-    animation: fadeIn 0.3s ease-out;
+    animation: fadeIn 0.3s ease-out both;
   }
 
   .animate-slide-in-right {
-    animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
   }
 
   .animate-fade-in-up {
-    animation: fadeInUp 0.6s ease-out;
+    animation: fadeInUp 0.6s ease-out both;
   }
-  
+
   .animate-bounce-short {
     animation: bounce 1s infinite;
   }
+
+  .animate-slide-in-panel {
+    animation: slideInPanel 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  .animate-slide-in-sidebar {
+    animation: slideInSidebar 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  .animate-fade-in-row {
+    animation: fadeInRow 0.4s ease-out both;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.25s ease-out both;
+  }
+
+  /* ── Skeleton shimmer ── */
+
+  .admin-shimmer {
+    background-image: linear-gradient(
+      90deg,
+      #ebebeb 0%,
+      #f5f5f5 40%,
+      #ebebeb 80%
+    );
+    background-size: 400% 100%;
+    background-position: 200% center;
+    animation: adminShimmer 1.6s ease-in-out infinite;
+  }
+
+  /* ── Admin scrollbar ── */
+
+  .admin-scroll::-webkit-scrollbar        { width: 4px; height: 4px; }
+  .admin-scroll::-webkit-scrollbar-track  { background: transparent; }
+  .admin-scroll::-webkit-scrollbar-thumb  { background: #2e2e2e; border-radius: 2px; }
+  .admin-scroll::-webkit-scrollbar-thumb:hover { background: #555; }
 }
