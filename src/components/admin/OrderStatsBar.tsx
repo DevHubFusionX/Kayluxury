@@ -4,7 +4,7 @@ interface StatItem {
   label: string
   value: string | number
   sub?: string
-  icon: JSX.Element
+  icon: React.JSX.Element
   accent?: boolean
 }
 

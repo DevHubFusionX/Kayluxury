@@ -6,7 +6,7 @@ type Tab = 'overview' | 'orders' | 'products'
 interface NavItem {
   id: Tab
   label: string
-  icon: JSX.Element
+  icon: React.JSX.Element
 }
 
 const NAV_ITEMS: NavItem[] = [
