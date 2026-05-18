@@ -30,6 +30,7 @@ export interface Product {
 }
 
 export interface Category {
+  id: string
   name: string
   image: string
   count: number
@@ -74,6 +75,15 @@ export interface OrderPayload {
 const productsCollection = collection(db, 'products')
 const categoriesCollection = collection(db, 'categories')
 const ordersCollection = collection(db, 'orders')
+
+const DEFAULT_CATEGORIES = [
+  { name: 'Linen', image: 'https://images.unsplash.com/photo-1594932224828-b4b05a832974?q=80&w=500&auto=format&fit=crop' },
+  { name: 'T-shirts', image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=500&auto=format&fit=crop' },
+  { name: 'Bottoms', image: 'https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=500&auto=format&fit=crop' },
+  { name: 'Footwear', image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=500&auto=format&fit=crop' },
+  { name: 'Accessories', image: 'https://images.unsplash.com/photo-1523206489230-c012c64b2b48?q=80&w=500&auto=format&fit=crop' },
+  { name: 'Shirts', image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=500&auto=format&fit=crop' },
+]
 
 function mapProduct(docId: string, data: Record<string, unknown>): Product {
   return {
@@ -130,12 +140,38 @@ export const api = {
     return mapProduct(snap.id, snap.data() as Record<string, unknown>)
   },
 
-  getCategories: async (): Promise<{ name: string; image: string; count: number }[]> => {
-    const snapshot = await getDocs(categoriesCollection)
+  getCategories: async (): Promise<Category[]> => {
+    let snapshot = await getDocs(query(categoriesCollection, orderBy('name', 'asc')))
+    // Auto-seed if collection is empty
+    if (snapshot.empty) {
+      await Promise.all(DEFAULT_CATEGORIES.map(c => addDoc(categoriesCollection, c)))
+      snapshot = await getDocs(query(categoriesCollection, orderBy('name', 'asc')))
+    }
+    const productsSnap = await getDocs(productsCollection)
+    const productDocs = productsSnap.docs.map(d => d.data() as Record<string, unknown>)
     return snapshot.docs.map((d) => {
       const data = d.data() as Record<string, unknown>
-      return { name: String(data.name ?? ''), image: String(data.image ?? ''), count: Number(data.count ?? 0) }
+      const name = String(data.name ?? '')
+      return {
+        id: d.id,
+        name,
+        image: String(data.image ?? ''),
+        count: productDocs.filter(p => p.category === name).length,
+      }
     })
+  },
+
+  createCategory: async (name: string, image: string): Promise<string> => {
+    const docRef = await addDoc(categoriesCollection, { name, image })
+    return docRef.id
+  },
+
+  updateCategory: async (id: string, updates: { name?: string; image?: string }): Promise<void> => {
+    await updateDoc(doc(db, 'categories', id), updates)
+  },
+
+  deleteCategory: async (id: string): Promise<void> => {
+    await deleteDoc(doc(db, 'categories', id))
   },
 
   createOrder: async (payload: OrderPayload): Promise<{ message: string; orderId: string }> => {

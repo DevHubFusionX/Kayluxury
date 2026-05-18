@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ProductCard } from '../components/common/ProductCard';
-import { api, type ProductsResponse } from '../lib/api';
+import { api, type ProductsResponse, type Category } from '../lib/api';
 
 const LIMIT = 8;
 
@@ -13,6 +13,12 @@ const Products: React.FC = () => {
   const category = searchParams.get('category') || '';
   const sort = searchParams.get('sort') || '';
   const page = Number(searchParams.get('page') || 1);
+
+  const { data: categoryDocs = [] } = useQuery<Category[]>({
+    queryKey: ['categories'],
+    queryFn: api.getCategories,
+  });
+  const categoryNames = categoryDocs.map(c => c.name);
 
   const { data, isLoading, isError } = useQuery<ProductsResponse, Error>({
     queryKey: ['products', category, sort, page],
@@ -42,7 +48,7 @@ const Products: React.FC = () => {
       <div>
         <h3 className="text-sm font-bold uppercase tracking-widest mb-4">Categories</h3>
         <ul className="space-y-2 text-sm text-gray-600">
-          {['', 'T-shirts', 'Shirts', 'Linen', 'Bottoms', 'Footwear', 'Accessories'].map((cat) => (
+          {['', ...categoryNames].map((cat) => (
             <li
               key={cat}
               onClick={() => { setParam('category', cat); setIsFilterOpen(false); }}

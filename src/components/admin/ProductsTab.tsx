@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { api, type Product } from '../../lib/api'
+import { api, type Product, type Category } from '../../lib/api'
 import { ProductForm } from './ProductForm'
 import { ProductListItem } from './ProductListItem'
-
-const CATEGORIES = ['All', 'T-shirts', 'Shirts', 'Linen', 'Bottoms', 'Footwear', 'Accessories']
 
 type ViewMode = 'list' | 'grid'
 
@@ -13,6 +11,12 @@ export function ProductsTab() {
   const [categoryFilter, setCategoryFilter] = useState('All')
   const [view, setView] = useState<ViewMode>('list')
   const [showForm, setShowForm] = useState(false)
+
+  const { data: categoryDocs = [] } = useQuery<Category[]>({
+    queryKey: ['categories'],
+    queryFn: api.getCategories,
+  })
+  const CATEGORIES = ['All', ...categoryDocs.map(c => c.name)]
 
   const { data: products = [], isLoading } = useQuery<Product[]>({
     queryKey: ['products-admin'],

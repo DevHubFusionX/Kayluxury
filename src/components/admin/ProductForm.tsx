@@ -1,17 +1,15 @@
 import { useState, useEffect } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { api, type Product } from '../../lib/api'
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
+import { api, type Product, type Category } from '../../lib/api'
 import { toast } from '../common/Toast'
 import { ImageUploader } from './ImageUploader'
 import { SizeSelector } from './SizeSelector'
 import { ColorPicker } from './ColorPicker'
 
-const CATEGORIES = ['T-shirts', 'Shirts', 'Linen', 'Bottoms', 'Footwear', 'Accessories']
-
 const EMPTY = {
   name: '',
   price: '',
-  category: 'T-shirts',
+  category: '',
   description: '',
   details: '',
   inStock: true,
@@ -47,6 +45,12 @@ interface Props {
 export function ProductForm({ editProduct, onSuccess }: Props) {
   const queryClient = useQueryClient()
 
+  const { data: categoryDocs = [] } = useQuery<Category[]>({
+    queryKey: ['categories'],
+    queryFn: api.getCategories,
+  })
+  const categoryNames = categoryDocs.map(c => c.name)
+
   const [form, setForm] = useState({
     ...EMPTY,
     ...(editProduct ? {
@@ -56,7 +60,7 @@ export function ProductForm({ editProduct, onSuccess }: Props) {
       description: editProduct.description,
       details: editProduct.details.join('\n'),
       inStock: editProduct.inStock,
-    } : {}),
+    } : { category: categoryNames[0] ?? '' }),
   })
   const [sizes, setSizes] = useState<string[]>(editProduct?.sizes ?? ['S', 'M', 'L', 'XL'])
   const [colors, setColors] = useState<Product['colors']>(editProduct?.colors ?? [{ name: 'Black', hex: '#000000' }])
@@ -207,7 +211,7 @@ export function ProductForm({ editProduct, onSuccess }: Props) {
             <div>
               <label className={labelCls}>Category</label>
               <select name="category" value={form.category} onChange={set} className={inputCls}>
-                {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                {categoryNames.map(c => <option key={c}>{c}</option>)}
               </select>
             </div>
           </div>

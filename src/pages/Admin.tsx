@@ -3,14 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { api, type Order } from '../lib/api'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '../context/AuthContext'
-import { AdminShell } from '../components/admin/AdminShell'
+import { AdminShell, type Tab } from '../components/admin/AdminShell'
 import { OverviewTab } from '../components/admin/OverviewTab'
 import { OrdersTab } from '../components/admin/OrdersTab'
 import { ProductsTab } from '../components/admin/ProductsTab'
+import { CategoriesTab } from '../components/admin/CategoriesTab'
 import { OrderDetailModal } from '../components/admin/OrderDetailModal'
 import type { Product } from '../lib/api'
-
-type Tab = 'overview' | 'orders' | 'products'
 
 export default function Admin() {
   const navigate = useNavigate()
@@ -69,6 +68,7 @@ export default function Admin() {
           <OrdersTab orders={orders} loading={ordersLoading} />
         )}
         {tab === 'products' && <ProductsTab />}
+        {tab === 'categories' && <CategoriesTab />}
       </AdminShell>
 
       {/* Global order modal (opened from Overview tab) */}
